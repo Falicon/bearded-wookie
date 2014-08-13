@@ -11,7 +11,9 @@ The initial version of this engine was built to power the backend of a mobile ga
 
 The basic idea was to be able to develop new text-based adventures simply by focusing on, and defining, the specific story and puzzles (and not have to worry about 'programming' each time you wanted to build a new game).
 
-At it's core the engine is simply manages the state of a few key variables (primarily 'story'), and returns the results of each attempted action in an array of text results.  The 'story' is defined as a json object and contains all the details of a given game (more details on how to properly define a 'story' below).
+At it's core the engine simply manages the state of a few key JSON objects (primarily 'story'), and returns the results of each attempted action in an array of text results.
+
+The 'story' JSON object contains all the unique details of a given game (more details on how to properly define the 'story' object below). So to build a new, unique game the core of what you will need to do is just define a new 'story' object.
 
 To see the engine in action you should be able to simply load the index.html file into your browser and play the example game included here. From there, you should play around with making adjustments to the game_file.js to see just what happens and how easy it should be to build out some really fun games.
 
@@ -161,7 +163,7 @@ Friendlies are the things within your game that can provide useful clues and ite
 
 There are a lot of options available when defining a friendly, but the important ones are of course the x, y, z coordinates (they define where the friendly starts on the map), the type (fixed or roaming), and conversation.
 
-When a players says something to a friendly (via the 'say' command) a regular expression is used to try and matach against the keys of the converastion variable. If not matches are found, then the 'default' conversation is said back to the player.
+When a players says something to a friendly (via the 'say' command) a regular expression is used to try and matach against the keys of the converastion variable. If no matches are found, then the 'default' conversation is said back to the player.
 
 Friendlies can also have puzzles associated to them. In this example, when a player issues the command of "pray to old man" the puzzle would be solved and they would be given a poison sword.
 
