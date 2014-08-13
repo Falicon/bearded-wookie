@@ -86,7 +86,7 @@ You can have as many missions as you like (I like to think of them like subplots
 This is where the player or main character is defined.
 
 ```JSON
-  character = {
+  {
     "name":"Falicon",
     "karma":0,
     "x":12,"y":8,"z":0,
