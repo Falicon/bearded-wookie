@@ -235,13 +235,13 @@ If you include an 'hidden_items' array, these are objects that can only be disco
 
 In order for players to be able to move around the map, you will need to define exits from room to room. You can define regular exits, hidden_exits, and locked_exits. Regular exits are available as soon as the player enters the room, hidden_exits can be revealed when a puzzle is solved, and locked_exits can be unlocked when a puzzle is solved (eg use key).
 
-**NOTE:** Generally you should define exits that go both ways. That is, if you define an exit N in spot on the map, the spot north of that location should probably have an exit S defined as well (so the player can move back and forth between the rooms).
+**NOTE:** Generally you should define exits that go both ways. That is, if you define an exit N in a spot on the map, the spot north of that location should probably have an exit S defined as well (so the player can move back and forth between the rooms).
 
 ### Advice
 
 The game engine is designed to be pretty flexible and has **a lot** of options that are not defined or outlined here.  So play around with the example file(s) and see what happens. The game_file.js should give you a good start in understanding a lot of the basics, but there are a lot of combinations and details that it doesn't cover (in order to keep it as simple as possible for beginners).
 
-So when it doubt, just give it a try...**you never know what might happen**!
+So when in doubt, just give it a try...**you never know what might happen**!
 
 ### Questions?
 
