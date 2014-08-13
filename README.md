@@ -245,5 +245,5 @@ So when in doubt, just give it a try...**you never know what might happen**!
 
 ### Questions?
 
-If you have suggestions, questions, or ideas about anything here or just need some help...please feel free to reach out to Kevin Marshall at **info at falicon.com** any time.
+If you have suggestions, questions, or ideas about anything here or just need some help...please feel free to reach out to Kevin Marshall at **info at falicon.com** or via twitter [@falicon](http://twitter.com/falicon) any time.
 
