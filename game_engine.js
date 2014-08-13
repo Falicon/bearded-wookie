@@ -2049,11 +2049,12 @@ function steal(object_name) {
       results.push(rec);
       // attempt to relocate the user to jail
       var has_jail = false;
-      if ('type' in map_location[0] && map_location[0]['type'] == 'jail') {
+      var jail_location = story['map'].filter(function (map) { return map.type == 'jail' });
+      if ('x' in jail_location[0]) {
         // relocate to the last save spot
-        story['character']['x'] = map_location[0]['x'];
-        story['character']['y'] = map_location[0]['y'];
-        story['character']['z'] = map_location[0]['z'];
+        story['character']['x'] = jail_location[0]['x'];
+        story['character']['y'] = jail_location[0]['y'];
+        story['character']['z'] = jail_location[0]['z'];
         var rec = {};
         rec['title'] = 'TRANSPORTED';
         rec['lines'] = ['You have been transported to a new location on the map!'];

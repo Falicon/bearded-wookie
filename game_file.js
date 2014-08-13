@@ -13,26 +13,26 @@ var story = {
   ],
   "character": {
     "name":"Falicon","karma":0,
-    "x":12,"y":8,"z":0,"lives":1,
+    "x":4,"y":6,"z":1,"lives":1,
     "score":0,"health":100,"max_health":100,
     "magic":10,"max_magic":10,
     "coins":20,"power_range":[0,10],
     "items":[],
     "spells":["heal"],
-    "equiped":[]
+    "equiped":["candle"]
   },
   "spells":[
     {"name":"heal","detail":"With proper mental focus you are able to heal yourself a bit.","magic_cost":2,"adjust_health":25},
   ],
   "enemies": [
     {"name":"troll","type":"fixed","disposition":"aggressive","x":2,"y":2,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
-    {"name":"troll","type":"fized","disposition":"aggressive","x":4,"y":3,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
+    {"name":"troll","type":"fixed","disposition":"aggressive","x":4,"y":3,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
     {"name":"troll","type":"fixed","spawn":{"x":3,"y":5,"z":1,"health":10},"x":3,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
     {"name":"troll","type":"fixed","spawn":{"x":4,"y":5,"z":1,"health":10},"x":4,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":["candy bar"]},
     {"name":"red troll","type":"fixed","x":1,"y":4,"z":1,"power_range":[5,50],"health":50,"point_value":50,"detail":"a red, foul, smelly creature. It looks like it might take something special to defeat this troll.","items":[],"required":["poison sword"]}
   ],
   "friendlies": [
-    {"name":"old man","x":4,"y":6,"z":1,"type":"fixed","detail":"a wise looking old man.","conversation":{"default":"There is a red troll wreaking havoc nearby. Please help rid him of our land! You should be able to find a sword to help west of here."},"items":["poison sword"],"puzzles":[
+    {"name":"old man","x":4,"y":6,"z":1,"type":"fixed","detail":"a wise looking old man.","conversation":{"default":"There is a red troll wreaking havoc nearby. Please help rid him of our land! You should be able to find a sword to help west of here."},"puzzles":[
       {"cmd":"pray","solution":"old man","items":["poison sword"],"detail":"Thanks! Take this for your efforts!"}
     ]},
     {"name":"woman","x":4,"y":2,"z":1,"type":"fixed","detail":"a friendly looking woman.","conversation":{"default":"I used to make posion from just water, poison ivy, and a rotten apple!"}},
