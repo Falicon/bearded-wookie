@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+<body>
+
+  <form method="post" action="index.html" id="command_form">
+    <textarea name="command" id="command" rows="4" cols="50" placeholder="What would you like to do now?"></textarea>
+    <br />
+    <input type="submit" value="try it" class="ui-button" style="background-color:#f36523;" />
+  </form>
+  <div id="game_detail"></div>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript" src="game_engine.js"></script>
+
+  <script type="text/javascript" src="game_file.js"></script>
+
+  <script type="text/javascript" src="game_control.js"></script>
+  <script type="text/javascript">
+    /******************************
+    *** START GAME (perform basic look)
+    ******************************/
+    var last_command = 'examine location';
+    var html = format_response(attempt_command('look'));
+    $('#game_detail').html(html);
+    $('#command').val('');
+  </script>
+</body>
+</html>
