@@ -2264,7 +2264,7 @@ function view_map_location() {
     rec['lines'] = [map_location[0]['description']];
     if ('items' in map_location[0] && map_location[0]['items'].length > 0) {
       for (var i = 0; i < map_location[0]['items'].length; i++) {
-        rec['lines'].push('A <strong>' + map_location[0]['items'][i].toLowerCase() + '</strong> is here.');
+        rec['lines'].push('A <span class="game_item">' + map_location[0]['items'][i].toLowerCase() + '</span> is here.');
       }
     }
     var enemies_in_room = story['enemies'].filter(function(enemies){return enemies.x == story['character']['x'] && enemies.y == story['character']['y'] && enemies.z == story['character']['z']});
@@ -2281,7 +2281,7 @@ function view_map_location() {
     }
     if ('objects' in map_location[0] && map_location[0]['objects'].length > 0) {
       for (var i = 0; i < map_location[0]['objects'].length; i++) {
-        rec['lines'].push('A <strong>' + map_location[0]['objects'][i].toLowerCase() + '</strong> is here.');
+        rec['lines'].push('A <span class="game_item">' + map_location[0]['objects'][i].toLowerCase() + '</span> is here.');
       }
     }
     results.push(rec);
