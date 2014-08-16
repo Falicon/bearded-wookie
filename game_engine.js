@@ -1412,7 +1412,7 @@ function examine(object_name) {
   var can_examine = false;
   // make sure the object is in the room with the character or in the character inventory
   var map_location = story['map'].filter(function (map) { return map.x == story['character']['x'] && map.y == story['character']['y'] && map.z == story['character']['z'] });
-  if ('items' in map_location[0] && map_location[0]['items'].indexOf(object_name) > -1 || story['character']['items'].indexOf(object_name) > -1) {
+  if (('items' in map_location[0] && map_location[0]['items'].indexOf(object_name) > -1) || story['character']['items'].indexOf(object_name) > -1) {
     var object_detail = story['objects'].filter(function (objects) { return objects.name == object_name });
     if (object_detail.length > 0) {
       can_examine = true;
