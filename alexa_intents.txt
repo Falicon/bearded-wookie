@@ -14,6 +14,12 @@
       "intent": "StartGameIntent"
     },
     {
+      "intent": "ContinueGameIntent"
+    },
+    {
+      "intent": "SaveGameIntent"
+    },
+    {
       "intent": "AMAZON.StopIntent"
     }
   ]

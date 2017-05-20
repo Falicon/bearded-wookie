@@ -1,0 +1,20 @@
+CommadIntent {GameCommand}
+CommandIntent {GameCommand} {GameObject}
+ContinueGameIntent continue
+ContinueGameIntent load
+StartGameIntent begin game
+StartGameIntent start game
+StartGameIntent start new game
+StartGameIntent play game
+StartGameIntent play new game
+StartGameIntent new game
+StartGameIntent new
+StartGameIntent play
+StartGameIntent start
+StartGameIntent begin
+StartGameIntent engage
+AMAZON.StopIntent quit
+AMAZON.StopIntent stop
+AMAZON.StopIntent cancel
+AMAZON.StopIntent end
+AMAZON.StopIntent done

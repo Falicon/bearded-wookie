@@ -372,7 +372,7 @@ exports.handler = function (req, context) {
             rec['lines'] = ['YOU HAVE BEEN KILLED!','The game has been reset to your last save.'];
             results.push(rec);
             // reset to the last save
-            story = JSON.parse(JSON.stringify(saved));
+            story = JSON.parse(JSON.stringify(alexa_response['sessionAttributes']['saved']));
           } else {
             // user is still alive, but took some damage!
             var rec = {};
@@ -2178,9 +2178,9 @@ exports.handler = function (req, context) {
         }
         if (!has_jail) {
           // relocate to the last save spot
-          story['character']['x'] = saved['character']['x'];
-          story['character']['y'] = saved['character']['y'];
-          story['character']['z'] = saved['character']['z'];
+          story['character']['x'] = alexa_response['sessionAttributes']['saved']['character']['x'];
+          story['character']['y'] = alexa_response['sessionAttributes']['saved']['character']['y'];
+          story['character']['z'] = alexa_response['sessionAttributes']['saved']['character']['z'];
           var rec = {};
           rec['title'] = 'TRANSPORTED';
           rec['lines'] = ['You have been transported to a new location on the map!'];
@@ -2697,9 +2697,9 @@ exports.handler = function (req, context) {
     // make any required board adjustments
     results = results.concat(board_movement());
     // make sure we have saved values (for resets)
-    if ('character' in saved) {
+    if ('character' in alexa_response['sessionAttributes']['saved']) {
     } else {
-      saved = JSON.parse(JSON.stringify(story));
+      alexa_response['sessionAttributes']['saved'] = JSON.parse(JSON.stringify(story));
     }
     return results;
   }
@@ -2759,9 +2759,26 @@ exports.handler = function (req, context) {
        ------------------------------------------
        User wants to end the game.
     =========================================== */
+    // TODO save game stats alexa_response['sessionAttributes']['saved']
     alexa_response['response']['outputSpeech']['text'] = 'Thank you for playing!';
     alexa_response['response']['shouldEndSession'] = true;
     context.succeed(alexa_response);
+
+  } else if (intent == 'ContinueGameIntent') {
+    /* ==========================================
+       CONTINUE GAME INTENT
+       ------------------------------------------
+       User wants to continue a saved game.
+    ========================================== */
+    // TODO load saved game details for this account
+
+  } else if (intent == 'SaveGameIntent') {
+    /* ==========================================
+       SAVE GAME INTENT
+       ------------------------------------------
+       User wants to save game at current state.
+    ========================================== */
+    // TODO save game stats alexa_response['sessionAttributes']['saved']
 
   } else if (intent == 'StartGameIntent' || intent == 'AMAZON.StartOverIntent') {
     /* ==========================================
