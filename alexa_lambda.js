@@ -9,11 +9,12 @@ exports.handler = function (req, context) {
     version: "1.0",
     response: {
       outputSpeech: { type: "PlainText", text: "Hello" },
-      card: { type: "Simple", title: "Memory Mania", content: "" },
+      card: { type: "Simple", title: "Fubnub", content: "A simple voice driven adventue game." },
       reprompt: { outputSpeech: { type: "PlainText", text: "Hello" } },
       shouldEndSession: false
     },
     sessionAttributes: {
+      'story':{},
       'saved':{}
     }
   };
@@ -26,92 +27,110 @@ exports.handler = function (req, context) {
   try { alexa_session = req.session; alexa_response['response']['session'] = alexa_session; } catch (err) { }
   try { if ('attributes' in alexa_session && alexa_session['attributes'] != null) { alexa_response['sessionAttributes'] = alexa_session['attributes']; } } catch (err) {  }
 
-  var story = {
-    "plot":"The red troll.",
-    "missions":[
-      {
-        "name":"hunt for the red troll",
-        "status":"unresolved",
-        "detail":"Find and kill the red troll.",
-        "point_value":100,
-        "puzzles":[
-          {"cmd":"build", "solution":"poison sword", "detail":"create a special weapon.", "status":"unresolved"}
-        ]
-      }
-    ],
-    "character": {
-      "name":"Falicon","karma":0,
-      "x":4,"y":6,"z":1,"lives":1,
-      "score":0,"health":100,"max_health":100,
-      "magic":10,"max_magic":10,
-      "coins":20,"power_range":[0,10],
-      "items":[],
-      "spells":["heal"],
-      "equiped":["candle"]
-    },
-    "spells":[
-      {"name":"heal","detail":"With proper mental focus you are able to heal yourself a bit.","magic_cost":2,"adjust_health":25},
-    ],
-    "enemies": [
-      {"name":"troll","type":"fixed","disposition":"aggressive","x":2,"y":2,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
-      {"name":"troll","type":"fixed","disposition":"aggressive","x":4,"y":3,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
-      {"name":"troll","type":"fixed","spawn":{"x":3,"y":5,"z":1,"health":10},"x":3,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
-      {"name":"troll","type":"fixed","spawn":{"x":4,"y":5,"z":1,"health":10},"x":4,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":["candy bar"]},
-      {"name":"red troll","type":"fixed","x":1,"y":4,"z":1,"power_range":[5,50],"health":50,"point_value":50,"detail":"a red, foul, smelly creature. It looks like it might take something special to defeat this troll.","items":[],"required":["poison sword"]}
-    ],
-    "friendlies": [
-      {"name":"old man","x":4,"y":6,"z":1,"type":"fixed","detail":"a wise looking old man.","conversation":{"default":"There is a red troll wreaking havoc nearby. Please help rid him of our land! You should be able to find a sword to help west of here."},"puzzles":[
-        {"cmd":"pray","solution":"old man","items":["poison sword"],"detail":"Thanks! Take this for your efforts!"}
-      ]},
-      {"name":"woman","x":4,"y":2,"z":1,"type":"fixed","detail":"a friendly looking woman.","conversation":{"default":"I used to make posion from just water, poison ivy, and a rotten apple!"}},
-      {"name":"boy","x":2,"y":4,"z":1,"type":"fixed","detail":"a happy looking boy.","conversation":{"default":"They say that the red troll can only be defeated by a sword dipped in poison!"},"items":["candy bar"]},
-      {"name":"inn keeper","x":6,"y":3,"z":1,"type":"fixed","detail":"a friendly looking chap.","conversation":{"default":"You should use our bed. I promise you'll feel great when you are done!"}},
-      {"name":"wanderer","x":4,"y":4,"z":1,"type":"fixed","detail":"a well traveled looking fellow.","conversation":{"default":"I hear there is an inn somewhere to the east of here that can help you recover health!"},"puzzles":[
-        {"cmd":"location","solution":"4, 6, 1","detail":"The wanderer runs to greet the old man!","type_change":"fixed","items":["rotten apple"]}
-      ]}
-    ],
-    "objects": [
-      {"name":"water","type":"consumable","detail":"A small bottle of water. I wonder if you can combine this with something?","health_bump":0},
-      {"name":"poison ivy","type":"consumable","detail":"A leaf of poison ivy. I wonder if you can combine this with something?","health_bump":-5},
-      {"name":"rotten apple","type":"consumable","detail":"A half-rotten, disgusting, apple. I wonder if you can combine this with something?","health_bump":-1},
-      {"name":"candy bar","type":"consumable","detail":"a tasty treat!","health_bump":-10},
-      {"name":"sword","type":"weapon","detail":"a fine weapon for a warrior","power_range":[10,20]},
-      {"name":"bed","type":"recovery","detail":"A cozy looking bed. Perhaps you should rest for a bit?","health_bump":100},
-      {"name":"lever","type":"item","detail":"A simple lever. Maybe you should try pulling it?"},
-      {"name":"bush","type":"item","detail":"A very dry looking bunch of tumbleweed."},
-      {"name":"poison","type":"consumable","detail":"a deadly concotion","health_bump":-30,"build_with":["water","rotten apple","poison ivy"]},
-      {"name":"poison sword","type":"weapon","detail":"an awesome weapon for a warrior","power_range":[10,30],"build_with":["sword","poison"]}
-    ],
-    "map": [
-      {"name":"3-1","x":3,"y":1,"z":1,"type":"jail","description":"","items":["water"],"exits":["e","s"]},
-      {"name":"4-1","x":4,"y":1,"z":1,"description":"","exits":["w","s"]},
-      {"name":"2-2","x":2,"y":2,"z":1,"description":"","exits":["e","s"]},
-      {"name":"3-2","x":3,"y":2,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"4-2","x":4,"y":2,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"5-2","x":5,"y":2,"z":1,"description":"","items":["poison ivy"],"exits":["w","s"]},
-      {"name":"3-1","x":1,"y":3,"z":1,"description":"","exits":["e","s"]},
-      {"name":"3-2","x":2,"y":3,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"3-3","x":3,"y":3,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"4-3","x":4,"y":3,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"5-3","x":5,"y":3,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"6-3","x":6,"y":3,"z":1,"description":"","objects":["bed"],"exits":["w","s"]},
-      {"name":"1-4","x":1,"y":4,"z":1,"description":"","exits":["n","e"]},
-      {"name":"2-4","x":2,"y":4,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"3-4","x":3,"y":4,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"4-4","x":4,"y":4,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"5-4","x":5,"y":4,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"6-4","x":6,"y":4,"z":1,"description":"","items":["rotten apple"],"exits":["n","w"]},
-      {"name":"2-5","x":2,"y":5,"z":1,"description":"","exits":["n","e"]},
-      {"name":"3-5","x":3,"y":5,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"4-5","x":4,"y":5,"z":1,"description":"","exits":["n","s","e","w"]},
-      {"name":"5-5","x":5,"y":5,"z":1,"description":"","exits":["n","w"]},
-      {"name":"3-6","x":3,"y":6,"z":1,"description":"","objects":["lever"],"exits":["n","e"],"puzzles":[{"cmd":"pull","solution":"lever","detail":"A small section of the wall slides down revealing a compartment.","items":["sword"]}]},
-      {"name":"4-6","x":4,"y":6,"z":1,"description":"","objects":["bush"],"exits":["n"],"puzzles":[
-        {"cmd":"burn","solution":"bush","detail":"You burn the bush.","destroy":["bush"],"hidden_exits":["w"]}
-      ]}
-    ]
+  var story = {};
+  var story_loaded = false;
+  try {
+    story = alexa_response['sessionAttributes']['saved'];
+    var plot = story['plot'];
+    if (typeof(plot) != 'undefined' && plot != null) {
+      story['loaded'] = true;
+      story_loaded = true;
+    }
+  } catch (ex) {
+  }
+  if (!story_loaded) {
+    story = {
+      "plot":"The red troll.",
+      "missions":[
+        {
+          "name":"hunt for the red troll",
+          "status":"unresolved",
+          "detail":"Find and kill the red troll.",
+          "point_value":100,
+          "puzzles":[
+            {"cmd":"build", "solution":"poison sword", "detail":"create a special weapon.", "status":"unresolved"}
+          ]
+        }
+      ],
+      "character": {
+        "name":"Falicon","karma":0,
+        "x":4,"y":6,"z":1,"lives":1,
+        "score":0,"health":100,"max_health":100,
+        "magic":10,"max_magic":10,
+        "coins":20,"power_range":[0,10],
+        "items":[],
+        "spells":["heal"],
+        "equiped":["candle"]
+      },
+      "spells":[
+        {"name":"heal","detail":"With proper mental focus you are able to heal yourself a bit.","magic_cost":2,"adjust_health":25},
+      ],
+      "enemies": [
+        {"name":"troll","type":"fixed","disposition":"aggressive","x":2,"y":2,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
+        {"name":"troll","type":"fixed","disposition":"aggressive","x":4,"y":3,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
+        {"name":"troll","type":"fixed","spawn":{"x":3,"y":5,"z":1,"health":10},"x":3,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":[]},
+        {"name":"troll","type":"fixed","spawn":{"x":4,"y":5,"z":1,"health":10},"x":4,"y":5,"z":1,"power_range":[1,25],"health":25,"point_value":5,"detail":"A foul, smelly creature.","items":["candy bar"]},
+        {"name":"red troll","type":"fixed","x":1,"y":4,"z":1,"power_range":[5,50],"health":50,"point_value":50,"detail":"a red, foul, smelly creature. It looks like it might take something special to defeat this troll.","items":[],"required":["poison sword"]}
+      ],
+      "friendlies": [
+        {"name":"old man","x":4,"y":6,"z":1,"type":"fixed","detail":"a wise looking old man.","conversation":{"default":"There is a red troll wreaking havoc nearby. Please help rid him of our land! You should be able to find a sword to help west of here."},"puzzles":[
+          {"cmd":"pray","solution":"old man","items":["poison sword"],"detail":"Thanks! Take this for your efforts!"}
+        ]},
+        {"name":"woman","x":4,"y":2,"z":1,"type":"fixed","detail":"a friendly looking woman.","conversation":{"default":"I used to make posion from just water, poison ivy, and a rotten apple!"}},
+        {"name":"boy","x":2,"y":4,"z":1,"type":"fixed","detail":"a happy looking boy.","conversation":{"default":"They say that the red troll can only be defeated by a sword dipped in poison!"},"items":["candy bar"]},
+        {"name":"inn keeper","x":6,"y":3,"z":1,"type":"fixed","detail":"a friendly looking chap.","conversation":{"default":"You should use our bed. I promise you'll feel great when you are done!"}},
+        {"name":"wanderer","x":4,"y":4,"z":1,"type":"fixed","detail":"a well traveled looking fellow.","conversation":{"default":"I hear there is an inn somewhere to the east of here that can help you recover health!"},"puzzles":[
+          {"cmd":"location","solution":"4, 6, 1","detail":"The wanderer runs to greet the old man!","type_change":"fixed","items":["rotten apple"]}
+        ]}
+      ],
+      "objects": [
+        {"name":"water","type":"consumable","detail":"A small bottle of water. I wonder if you can combine this with something?","health_bump":0},
+        {"name":"poison ivy","type":"consumable","detail":"A leaf of poison ivy. I wonder if you can combine this with something?","health_bump":-5},
+        {"name":"rotten apple","type":"consumable","detail":"A half-rotten, disgusting, apple. I wonder if you can combine this with something?","health_bump":-1},
+        {"name":"candy bar","type":"consumable","detail":"a tasty treat!","health_bump":-10},
+        {"name":"sword","type":"weapon","detail":"a fine weapon for a warrior","power_range":[10,20]},
+        {"name":"bed","type":"recovery","detail":"A cozy looking bed. Perhaps you should rest for a bit?","health_bump":100},
+        {"name":"lever","type":"item","detail":"A simple lever. Maybe you should try pulling it?"},
+        {"name":"bush","type":"item","detail":"A very dry looking bunch of tumbleweed."},
+        {"name":"poison","type":"consumable","detail":"a deadly concotion","health_bump":-30,"build_with":["water","rotten apple","poison ivy"]},
+        {"name":"poison sword","type":"weapon","detail":"an awesome weapon for a warrior","power_range":[10,30],"build_with":["sword","poison"]}
+      ],
+      "map": [
+        {"name":"3-1","x":3,"y":1,"z":1,"type":"jail","description":"","items":["water"],"exits":["east","south"]},
+        {"name":"4-1","x":4,"y":1,"z":1,"description":"","exits":["west","south"]},
+        {"name":"2-2","x":2,"y":2,"z":1,"description":"","exits":["east","south"]},
+        {"name":"3-2","x":3,"y":2,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"4-2","x":4,"y":2,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"5-2","x":5,"y":2,"z":1,"description":"","items":["poison ivy"],"exits":["west","south"]},
+        {"name":"3-1","x":1,"y":3,"z":1,"description":"","exits":["east","south"]},
+        {"name":"3-2","x":2,"y":3,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"3-3","x":3,"y":3,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"4-3","x":4,"y":3,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"5-3","x":5,"y":3,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"6-3","x":6,"y":3,"z":1,"description":"","objects":["bed"],"exits":["west","south"]},
+        {"name":"1-4","x":1,"y":4,"z":1,"description":"","exits":["north","east"]},
+        {"name":"2-4","x":2,"y":4,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"3-4","x":3,"y":4,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"4-4","x":4,"y":4,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"5-4","x":5,"y":4,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"6-4","x":6,"y":4,"z":1,"description":"","items":["rotten apple"],"exits":["north","west"]},
+        {"name":"2-5","x":2,"y":5,"z":1,"description":"","exits":["north","east"]},
+        {"name":"3-5","x":3,"y":5,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"4-5","x":4,"y":5,"z":1,"description":"","exits":["north","south","east","west"]},
+        {"name":"5-5","x":5,"y":5,"z":1,"description":"","exits":["north","west"]},
+        {"name":"3-6","x":3,"y":6,"z":1,"description":"","objects":["lever"],"exits":["north","east"],"puzzles":[{"cmd":"pull","solution":"lever","detail":"A small section of the wall slides down revealing a compartment.","items":["sword"]}]},
+        {"name":"4-6","x":4,"y":6,"z":1,"description":"","objects":["bush"],"exits":["north"],"puzzles":[
+          {"cmd":"burn","solution":"bush","detail":"You burn the bush.","destroy":["bush"],"hidden_exits":["west"]}
+        ]}
+      ]
+    }
   }
   var spawn = [];
+  var saved = {};
+  try {
+    saved = JSON.parse(JSON.stringify(story));
+  } catch (ex) {
+  }
 
   /**************************
   *** AVAILABLE COMMANDS
@@ -162,6 +181,20 @@ exports.handler = function (req, context) {
   /* =============================================
      SUPPORT FUNCTIONS
   ============================================= */
+
+  function format_response(response) {
+    var text = '';
+    for (var i = 0; i < response.length; i++) {
+      // text += response[i]['title'].toUpperCase();
+      // text += ' ';
+      for (var j = 0; j < response[i]['lines'].length; j++) {
+        if (response[i]['lines'][j].trim() != '') {
+          text += response[i]['lines'][j] + ' ';
+        }
+      }
+    }
+    return text;
+  }
 
   /**************************
   *** ATTACK
@@ -267,11 +300,11 @@ exports.handler = function (req, context) {
         } else if (damage_detail['damage'] > 0 && damage_detail['damage'] < 3) {
           damage_detail['detail'] = 'landed a weak blow';
           if (weapon != '') { damage_detail['detail'] += ' with the ' + weapon; }
-          damage_detail['detail'] += ' causing ' + damage_detail['damage'];
+          damage_detail['detail'] += ' causing ' + damage_detail['damage'] + ' damage';
         } else {
           damage_detail['detail'] = 'struck a solid blow';
           if (weapon != '') { damage_detail['detail'] += ' with the ' + weapon; }
-          damage_detail['detail'] += ' causing ' + damage_detail['damage'];
+          damage_detail['detail'] += ' causing ' + damage_detail['damage'] + ' damage';
         }
 
         if (attacker == 'character') {
@@ -347,7 +380,7 @@ exports.handler = function (req, context) {
               // enemy attacked, but is still alive!
               var rec = {};
               rec['title'] = 'ATTACK ' + attacked.toUpperCase();
-              rec['lines'] = ['You ' + damage_detail['detail'] + ' on ' + attacked + '.'];
+              rec['lines'] = ['You ' + damage_detail['detail'] + ' to ' + attacked + '.'];
               results.push(rec);
               // have the enemy immediately attack back!
               results = results.concat(attack(attacked,'character',''));
@@ -372,7 +405,7 @@ exports.handler = function (req, context) {
             rec['lines'] = ['YOU HAVE BEEN KILLED!','The game has been reset to your last save.'];
             results.push(rec);
             // reset to the last save
-            story = JSON.parse(JSON.stringify(alexa_response['sessionAttributes']['saved']));
+            story = JSON.parse(JSON.stringify(saved));
           } else {
             // user is still alive, but took some damage!
             var rec = {};
@@ -438,16 +471,16 @@ exports.handler = function (req, context) {
               results.push(rec);
             }
             switch (direction) {
-              case "n":story['friendlies'][i]['y'] -= 1;break;
-              case "s":story['friendlies'][i]['y'] += 1;break;
-              case "e":story['friendlies'][i]['x'] += 1;break;
-              case "w":story['friendlies'][i]['x'] -= 1;break;
-              case "ne":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] -= 1;break;
-              case "nw":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] -= 1;break;
-              case "se":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] += 1;break;
-              case "sw":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] += 1;break;
-              case "u":story['friendlies'][i]['z'] += 1;break;
-              case "d":story['friendlies'][i]['z'] -= 1;break;
+              case "north":story['friendlies'][i]['y'] -= 1;break;
+              case "south":story['friendlies'][i]['y'] += 1;break;
+              case "east":story['friendlies'][i]['x'] += 1;break;
+              case "west":story['friendlies'][i]['x'] -= 1;break;
+              case "northeast":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] -= 1;break;
+              case "northwest":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] -= 1;break;
+              case "southeast":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] += 1;break;
+              case "southwest":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] += 1;break;
+              case "up":story['friendlies'][i]['z'] += 1;break;
+              case "down":story['friendlies'][i]['z'] -= 1;break;
             }
           }
         }
@@ -478,16 +511,16 @@ exports.handler = function (req, context) {
               results.push(rec);
             }
             switch (direction) {
-              case "n":story['enemies'][i]['y'] -= 1;break;
-              case "s":story['enemies'][i]['y'] += 1;break;
-              case "e":story['enemies'][i]['x'] += 1;break;
-              case "w":story['enemies'][i]['x'] -= 1;break;
-              case "ne":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] -= 1;break;
-              case "nw":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] -= 1;break;
-              case "se":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] += 1;break;
-              case "sw":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] += 1;break;
-              case "u":story['enemies'][i]['z'] += 1;break;
-              case "d":story['enemies'][i]['z'] -= 1;break;
+              case "north":story['enemies'][i]['y'] -= 1;break;
+              case "south":story['enemies'][i]['y'] += 1;break;
+              case "east":story['enemies'][i]['x'] += 1;break;
+              case "west":story['enemies'][i]['x'] -= 1;break;
+              case "northeast":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] -= 1;break;
+              case "northwest":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] -= 1;break;
+              case "southeast":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] += 1;break;
+              case "southwest":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] += 1;break;
+              case "up":story['enemies'][i]['z'] += 1;break;
+              case "down":story['enemies'][i]['z'] -= 1;break;
             }
           }
         }
@@ -1788,32 +1821,32 @@ exports.handler = function (req, context) {
     var initial_y = y;
     var initial_z = z;
     switch (direction.toLowerCase()) {
-      case "north":direction = 'n';break;
-      case "south":direction = 's';break;
-      case "east":direction = 'e';break;
-      case "west":direction = 'w';break;
-      case "northeast":direction = 'ne';break;
-      case "northwest":direction = 'nw';break;
-      case "southeast":direction = 'se';break;
-      case "southwest":direction = 'sw';break;
-      case "up":direction = 'u';break;
-      case "down":direction = 'd';break;
+      case "north":direction = 'north';break;
+      case "south":direction = 'south';break;
+      case "east":direction = 'east';break;
+      case "west":direction = 'west';break;
+      case "northeast":direction = 'northeast';break;
+      case "northwest":direction = 'northwest';break;
+      case "southeast":direction = 'southeast';break;
+      case "southwest":direction = 'southwest';break;
+      case "up":direction = 'up';break;
+      case "down":direction = 'down';break;
     }
     // make sure the exit is available from the current location
     var map_location = story['map'].filter(function (map) { return map.x == x && map.y == y && map.z == z });
     if (map_location.length > 0 && 'exits' in map_location[0] && map_location[0]['exits'].indexOf(direction) > -1) {
       // we can move this direction
       switch (direction.toLowerCase()) {
-        case "n":y -= 1;break;
-        case "s":y += 1;break;
-        case "e":x += 1;break;
-        case "w":x -= 1;break;
-        case "ne":x += 1;y -= 1;break;
-        case "nw":x -= 1;y -= 1;break;
-        case "se":x += 1;y += 1;break;
-        case "sw":x -= 1;y += 1;break;
-        case "u":z += 1;break;
-        case "d":z -= 1;break;
+        case "north":y -= 1;break;
+        case "south":y += 1;break;
+        case "east":x += 1;break;
+        case "west":x -= 1;break;
+        case "northeast":x += 1;y -= 1;break;
+        case "northwest":x -= 1;y -= 1;break;
+        case "southeast":x += 1;y += 1;break;
+        case "southwest":x -= 1;y += 1;break;
+        case "up":z += 1;break;
+        case "down":z -= 1;break;
       }
       // attempt to get the new location on the map
       var new_map_location = story['map'].filter(function (map) { return map.x == x && map.y == y && map.z == z });
@@ -2178,9 +2211,9 @@ exports.handler = function (req, context) {
         }
         if (!has_jail) {
           // relocate to the last save spot
-          story['character']['x'] = alexa_response['sessionAttributes']['saved']['character']['x'];
-          story['character']['y'] = alexa_response['sessionAttributes']['saved']['character']['y'];
-          story['character']['z'] = alexa_response['sessionAttributes']['saved']['character']['z'];
+          story['character']['x'] = saved['character']['x'];
+          story['character']['y'] = saved['character']['y'];
+          story['character']['z'] = saved['character']['z'];
           var rec = {};
           rec['title'] = 'TRANSPORTED';
           rec['lines'] = ['You have been transported to a new location on the map!'];
@@ -2379,7 +2412,7 @@ exports.handler = function (req, context) {
       rec['lines'] = [map_location[0]['description']];
       if ('items' in map_location[0] && map_location[0]['items'].length > 0) {
         for (var i = 0; i < map_location[0]['items'].length; i++) {
-          rec['lines'].push('A <span class="game_item">' + map_location[0]['items'][i].toLowerCase() + '</span> is here.');
+          rec['lines'].push('A ' + map_location[0]['items'][i].toLowerCase() + ' is here.');
         }
       }
       var enemies_in_room = story['enemies'].filter(function(enemies){return enemies.x == story['character']['x'] && enemies.y == story['character']['y'] && enemies.z == story['character']['z']});
@@ -2396,7 +2429,7 @@ exports.handler = function (req, context) {
       }
       if ('objects' in map_location[0] && map_location[0]['objects'].length > 0) {
         for (var i = 0; i < map_location[0]['objects'].length; i++) {
-          rec['lines'].push('A <span class="game_item">' + map_location[0]['objects'][i].toLowerCase() + '</span> is here.');
+          rec['lines'].push('A ' + map_location[0]['objects'][i].toLowerCase() + ' is here.');
         }
       }
       results.push(rec);
@@ -2697,9 +2730,9 @@ exports.handler = function (req, context) {
     // make any required board adjustments
     results = results.concat(board_movement());
     // make sure we have saved values (for resets)
-    if ('character' in alexa_response['sessionAttributes']['saved']) {
+    if ('character' in saved) {
     } else {
-      alexa_response['sessionAttributes']['saved'] = JSON.parse(JSON.stringify(story));
+      saved = JSON.parse(JSON.stringify(story));
     }
     return results;
   }
@@ -2724,10 +2757,13 @@ exports.handler = function (req, context) {
       game_command += ' ' + game_object;
     }
 
-    var response = attempt_command(game_command);
+    var response = format_response(attempt_command(game_command));
     alexa_response['response']['outputSpeech']['text'] = response;
     alexa_response['response']['card']['content'] = response;
     alexa_response['response']['reprompt']['outputSpeech']['text'] = response;
+
+    alexa_response['sessionAttributes']['saved'] = JSON.parse(JSON.stringify(story));;
+
     context.succeed(alexa_response);
 
   } else if (intent == 'AMAZON.HelpIntent') {
@@ -2735,11 +2771,13 @@ exports.handler = function (req, context) {
        HELP INTENT
        ----------------------------------------
     =========================================== */
-    alexa_response['response']['outputSpeech']['text'] = '';
-    alexa_response['response']['outputSpeech']['text'] += '';
-    alexa_response['response']['outputSpeech']['text'] += '';
-    alexa_response['response']['outputSpeech']['text'] += ''
-    alexa_response['response']['reprompt']['outputSpeech']['text'] = '';
+    var help_command = req.request.intent.slots.HelpCommand.value || '';
+
+    var response = format_response(attempt_command('help ' + help_command));
+    alexa_response['response']['outputSpeech']['text'] = response;
+    alexa_response['response']['card']['content'] = response;
+    alexa_response['response']['reprompt']['outputSpeech']['text'] = response;
+
     context.succeed(alexa_response);
 
   } else if (request_type == 'LaunchRequest') {
@@ -2748,6 +2786,7 @@ exports.handler = function (req, context) {
        ----------------------------------------
        Generic request; give the user instrctuions on how to get a game started.
     =========================================== */
+    alexa_response['sessionAttributes']['saved'] = {};
     alexa_response['response']['outputSpeech']['text'] = 'Welcome to red troll! If you have a saved game, say continue game to pick up where you left off or say start new game to start a new game.';
     alexa_response['response']['card']['content'] = 'Welcome to red troll! If you have a saved game, say "continue game" to pick up where you left off or say, "start new game" to start a new game.';
     alexa_response['response']['reprompt']['outputSpeech']['text'] = 'Please say start new game to start a new game.';
@@ -2771,6 +2810,7 @@ exports.handler = function (req, context) {
        User wants to continue a saved game.
     ========================================== */
     // TODO load saved game details for this account
+    alexa_response['sessionAttributes']['saved'] = JSON.parse(JSON.stringify({}));;
 
   } else if (intent == 'SaveGameIntent') {
     /* ==========================================
@@ -2787,10 +2827,13 @@ exports.handler = function (req, context) {
        User wants to start a new game.
     ========================================== */
     var command = 'look';
-    var response = attempt_command(command);
+    var response = format_response(attempt_command(command));
     alexa_response['response']['outputSpeech']['text'] = response;
     alexa_response['response']['card']['content'] = response;
     alexa_response['response']['reprompt']['outputSpeech']['text'] = response;
+
+    alexa_response['sessionAttributes']['saved'] = JSON.parse(JSON.stringify(story));;
+
     context.succeed(alexa_response);
 
   }

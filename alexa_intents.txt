@@ -8,6 +8,9 @@
       "intent": "CommandIntent"
     },
     {
+      "slots": [
+        { "name": "HelpCommand", "type": "helpcommand" }
+      ],
       "intent": "AMAZON.HelpIntent"
     },
     {
