@@ -2766,12 +2766,12 @@ exports.handler = function (req, context) {
 
     context.succeed(alexa_response);
 
-  } else if (intent == 'AMAZON.HelpIntent') {
+  } else if (intent == 'GameHelpIntent' || intent == 'AMAZON.HelpIntent') {
     /* ===========================================
        HELP INTENT
        ----------------------------------------
     =========================================== */
-    var help_command = req.request.intent.slots.HelpCommand.value || '';
+    var help_command = req.request.intent.slots.GameCommand.value || '';
 
     var response = format_response(attempt_command('help ' + help_command));
     alexa_response['response']['outputSpeech']['text'] = response;

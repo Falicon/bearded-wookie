@@ -11,12 +11,10 @@ StartGameIntent begin
 StartGameIntent engage
 ContinueGameIntent continue
 ContinueGameIntent load
-CommandIntent {GameCommand} {GameObject} {GameAdj} {GameEntity}
-CommandIntent {GameCommand} {GameObject} {GameAdj} {GameEntity}
-CommandIntent {GameCommand} {GameAdj} {GameObject}
 CommandIntent {GameCommand} {GameObject}
 CommandIntent {GameCommand}
-AMAZON.HelpIntent {HelpCommand}
+GameHelpIntent help {GameCommand}
+AMAZON.HelpIntent help
 AMAZON.StopIntent quit
 AMAZON.StopIntent stop
 AMAZON.StopIntent cancel
