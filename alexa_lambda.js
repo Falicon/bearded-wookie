@@ -1736,16 +1736,17 @@ exports.handler = function (req, context) {
       }
       var rec = {};
       rec['title'] = 'HOW TO PLAY';
-      rec['lines'] = ['This is a free-roaming, text-only, game of imagination.','There are ' + story['missions'].length + ' total missions to solve.','Each mission may include many unique and challenging objectives.','There are ' + commands.length + ' commands you can use as you attempt your missions.','Details on each follows.'];
+      rec['lines'] = ['This is a free-roaming, text-only, game of imagination.','There are ' + story['missions'].length + ' total missions to solve.','Each mission may include many unique and challenging objectives.','There are ' + commands.length + ' commands you can use as you attempt your missions.'];
       results.push(rec);
+      // 'Details on each follows.'
       // show the list of commands you can get help with
-      for (var i = 0; i < commands.length; i++) {
-        var rec = {};
-        rec['title'] = commands[i]['cmd'].toUpperCase();
-        rec['lines'] = [commands[i]['help']['detail']];
-        rec['lines'].push(commands[i]['help']['syntax']);
-        results.push(rec);
-      }
+      // for (var i = 0; i < commands.length; i++) {
+      //   var rec = {};
+      //   rec['title'] = commands[i]['cmd'].toUpperCase();
+      //   rec['lines'] = [commands[i]['help']['detail']];
+      //   rec['lines'].push(commands[i]['help']['syntax']);
+      //   results.push(rec);
+      // }
     } else {
       var command_detail = commands.filter(function (commands) { return commands.cmd == cmd });
       if (command_detail.length > 0) {
@@ -1753,10 +1754,10 @@ exports.handler = function (req, context) {
         rec['title'] = cmd.toUpperCase();
         rec['lines'] = [command_detail[0]['help']['detail']];
         results.push(rec);
-        var rec = {};
-        rec['title'] = 'USAGE';
-        rec['lines'] = [command_detail[0]['help']['syntax']];
-        results.push(rec);
+        // var rec = {};
+        // rec['title'] = 'USAGE';
+        // rec['lines'] = [command_detail[0]['help']['syntax']];
+        // results.push(rec);
       } else {
         var rec = {};
         rec['title'] = 'BUMMER';
