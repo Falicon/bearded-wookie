@@ -847,6 +847,23 @@ function puzzle_solved_place_items(puzzle, results) {
   return results;
 }
 
+function puzzle_solved_place_objects(puzzle, results) {
+  // place items on map if need be
+  if ('place' in puzzle && 'objects' in puzzle['place'] && 'x' in puzzle['place'] && 'y' in puzzle['place'] && 'z' in puzzle['place']) {
+    var map_location_2 = story['map'].filter(function (map) { return map.x == puzzle['place']['x'] && map.y == puzzle['place']['y'] && map.z == puzzle['place']['z'] });
+    if ('objects' in map_location_2[0]) {
+      map_location_2[0]['objects'] = map_location_2[0]['objects'].concat(puzzle['place']['objects']);
+    } else {
+      map_location_2[0]['objects'] = puzzle['place']['objects'];
+    }
+    var rec = {};
+    rec['title'] = 'OBJECTS AVAILABLE';
+    rec['lines'] = ['You sense that an object has been revealed somewhere!'];
+    results.push(rec);
+  }
+  return results;
+}
+
 function puzzle_solved_place_puzzles(puzzle, results) {
   // place puzzles on map if need be
   if ('sequence' in puzzle && 'puzzles' in puzzle['sequence'] && 'x' in puzzle['sequence'] && 'y' in puzzle['sequence'] && 'z' in puzzle['sequence']) {
@@ -961,6 +978,7 @@ function check_puzzles(cmd, solution) {
         results = puzzle_solved_unlock_gates(puzzles[j], results);
         results = puzzle_solved_lock_gates(puzzles[j], results);
         results = puzzle_solved_place_items(puzzles[j], results);
+        results = puzzle_solved_place_objects(puzzles[j], results);
         results = puzzle_solved_place_puzzles(puzzles[j], results);
         results = puzzle_solved_transport(puzzles[j], results);
         puzzle_solved_room_repeatable(puzzles[j], map_location);
@@ -1028,6 +1046,7 @@ function check_puzzles(cmd, solution) {
           results = puzzle_solved_unlock_gates(puzzles[j], results);
           results = puzzle_solved_lock_gates(puzzles[j], results);
           results = puzzle_solved_place_items(puzzles[j], results);
+          results = puzzle_solved_place_objects(puzzles[j], results);
           results = puzzle_solved_place_puzzles(puzzles[j], results);
           results = puzzle_solved_transport(puzzles[j], results);
           puzzle_solved_friendly_repeatable(puzzles[j], friendlies_in_room[z]);
@@ -1085,6 +1104,7 @@ function check_puzzles(cmd, solution) {
           results = puzzle_solved_unlock_gates(story['missions'][i]['puzzles'][j], results);
           results = puzzle_solved_lock_gates(story['missions'][i]['puzzles'][j], results);
           results = puzzle_solved_place_items(story['missions'][i]['puzzles'][j], results);
+          results = puzzle_solved_place_objects(story['missions'][i]['puzzles'][j], results);
           results = puzzle_solved_place_puzzles(story['missions'][i]['puzzles'][j], results);
           results = puzzle_solved_transport(story['missions'][i]['puzzles'][j], results);
           results = puzzle_solved_hidden_exits(map_location, results);
