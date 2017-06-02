@@ -32,6 +32,7 @@ var commands = [
   {'cmd':'make','help':{'syntax':'make [item]','detail':'Attempts to make the item from items in your inventory'}},
   {'cmd':'missions','help':{'syntax':'missions','detail':'Displays the details about all available game missions.'}},
   {'cmd':'move','help':{'syntax':'move [direction]','detail':'If possible, moves you in the specified direction.'}},
+  {'cmd':'open','help':{'syntax':'open [object]','detail':'If possible, opens object.'}},
   {'cmd':'place','help':{'syntax':'place [object]','detail':'Places an object in location.'}},
   {'cmd':'pray','help':{'syntax':'pray OR pray to [object]','detail':'Address a solemn request or expression of thanks to a deity or other object of worship.'}},
   {'cmd':'pull','help':{'syntax':'pull [object]','detail':'if possible, pulls object.'}},
@@ -1785,6 +1786,41 @@ function move(direction) {
 }
 
 /**************************
+*** OPEN AN OBJECT
+**************************/
+function open_cmd(object_name) {
+  var results = [];
+  // determine if object is in the current room
+  var map_location = story['map'].filter(function (map) { return map.x == story['character']['x'] && map.y == story['character']['y'] && map.z == story['character']['z'] });
+  var object_in_room = false;
+  if ('objects' in map_location[0]) {
+    var objects_in_room = map_location[0]['objects'];
+    for (var i = 0; i < objects_in_room.length; i++) {
+      if (objects_in_room[i] == object_name) {
+        object_in_room = true;
+        break;
+      }
+    }
+  }
+  if (object_in_room) {
+    // object is in the room; check for open puzzle
+    results = results.concat(check_puzzles('open',object_name));
+    if (results.length == 0) {
+      var rec = {};
+      rec['title'] = 'OPEN ' + object_name.toUpperCase();
+      rec['lines'] = ['Try as you might, you are unable to open ' + object_name + '.'];
+      results.push(rec);
+    }
+  } else {
+    var rec = {};
+    rec['title'] = 'OPEN ' + object_name.toUpperCase();
+    rec['lines'] = ['There is no ' + object_name + ' to open here.'];
+    results.push(rec);
+  }
+  return results;
+}
+
+/**************************
 *** PRAY
 **************************/
 function pray(object_name) {
@@ -2509,6 +2545,11 @@ function attempt_command(raw_text) {
         break;
       case 'missions':
         results = results.concat(missions());
+        break;
+      case 'open':
+        if (rest_of_line != '') {
+          results = results.concat(open_cmd(rest_of_line));
+        }
         break;
       case 'pray':
         rest_of_line = rest_of_line.replace('at ', '').replace('for ','').replace('to ','');
