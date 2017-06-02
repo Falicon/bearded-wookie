@@ -162,6 +162,7 @@ exports.handler = function (req, context) {
     {'cmd':'make','help':{'syntax':'make [item]','detail':'Attempts to make the item from items in your inventory'}},
     {'cmd':'missions','help':{'syntax':'missions','detail':'Displays the details about all available game missions.'}},
     {'cmd':'move','help':{'syntax':'move [direction]','detail':'If possible, moves you in the specified direction.'}},
+    {'cmd':'open','help':{'syntax':'open [object]','detail':'If possible, opens object.'}},
     {'cmd':'place','help':{'syntax':'place [object]','detail':'Places an object in location.'}},
     {'cmd':'pray','help':{'syntax':'pray OR pray to [object]','detail':'Address a solemn request or expression of thanks to a deity or other object of worship.'}},
     {'cmd':'pull','help':{'syntax':'pull [object]','detail':'if possible, pulls object.'}},
@@ -177,24 +178,6 @@ exports.handler = function (req, context) {
     {'cmd':'unequip','help':{'syntax':'unequip [item]','detail':'Removes the item from your equiped list. Item remains in inventory.'}},
     {'cmd':'use','help':{'syntax':'use [item]','detail':'Attempt to use an item from your inventory.'}},
   ];
-
-  /* =============================================
-     SUPPORT FUNCTIONS
-  ============================================= */
-
-  function format_response(response) {
-    var text = '';
-    for (var i = 0; i < response.length; i++) {
-      // text += response[i]['title'].toUpperCase();
-      // text += ' ';
-      for (var j = 0; j < response[i]['lines'].length; j++) {
-        if (response[i]['lines'][j].trim() != '') {
-          text += response[i]['lines'][j] + ' ';
-        }
-      }
-    }
-    return text;
-  }
 
   /**************************
   *** ATTACK
@@ -300,11 +283,11 @@ exports.handler = function (req, context) {
         } else if (damage_detail['damage'] > 0 && damage_detail['damage'] < 3) {
           damage_detail['detail'] = 'landed a weak blow';
           if (weapon != '') { damage_detail['detail'] += ' with the ' + weapon; }
-          damage_detail['detail'] += ' causing ' + damage_detail['damage'] + ' damage';
+          damage_detail['detail'] += ' causing ' + damage_detail['damage'];
         } else {
           damage_detail['detail'] = 'struck a solid blow';
           if (weapon != '') { damage_detail['detail'] += ' with the ' + weapon; }
-          damage_detail['detail'] += ' causing ' + damage_detail['damage'] + ' damage';
+          damage_detail['detail'] += ' causing ' + damage_detail['damage'];
         }
 
         if (attacker == 'character') {
@@ -380,7 +363,7 @@ exports.handler = function (req, context) {
               // enemy attacked, but is still alive!
               var rec = {};
               rec['title'] = 'ATTACK ' + attacked.toUpperCase();
-              rec['lines'] = ['You ' + damage_detail['detail'] + ' to ' + attacked + '.'];
+              rec['lines'] = ['You ' + damage_detail['detail'] + ' on ' + attacked + '.'];
               results.push(rec);
               // have the enemy immediately attack back!
               results = results.concat(attack(attacked,'character',''));
@@ -471,16 +454,16 @@ exports.handler = function (req, context) {
               results.push(rec);
             }
             switch (direction) {
-              case "north":story['friendlies'][i]['y'] -= 1;break;
-              case "south":story['friendlies'][i]['y'] += 1;break;
-              case "east":story['friendlies'][i]['x'] += 1;break;
-              case "west":story['friendlies'][i]['x'] -= 1;break;
-              case "northeast":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] -= 1;break;
-              case "northwest":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] -= 1;break;
-              case "southeast":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] += 1;break;
-              case "southwest":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] += 1;break;
-              case "up":story['friendlies'][i]['z'] += 1;break;
-              case "down":story['friendlies'][i]['z'] -= 1;break;
+              case "n":story['friendlies'][i]['y'] -= 1;break;
+              case "s":story['friendlies'][i]['y'] += 1;break;
+              case "e":story['friendlies'][i]['x'] += 1;break;
+              case "w":story['friendlies'][i]['x'] -= 1;break;
+              case "ne":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] -= 1;break;
+              case "nw":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] -= 1;break;
+              case "se":story['friendlies'][i]['x'] += 1;story['friendlies'][i]['y'] += 1;break;
+              case "sw":story['friendlies'][i]['x'] -= 1;story['friendlies'][i]['y'] += 1;break;
+              case "u":story['friendlies'][i]['z'] += 1;break;
+              case "d":story['friendlies'][i]['z'] -= 1;break;
             }
           }
         }
@@ -511,16 +494,16 @@ exports.handler = function (req, context) {
               results.push(rec);
             }
             switch (direction) {
-              case "north":story['enemies'][i]['y'] -= 1;break;
-              case "south":story['enemies'][i]['y'] += 1;break;
-              case "east":story['enemies'][i]['x'] += 1;break;
-              case "west":story['enemies'][i]['x'] -= 1;break;
-              case "northeast":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] -= 1;break;
-              case "northwest":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] -= 1;break;
-              case "southeast":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] += 1;break;
-              case "southwest":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] += 1;break;
-              case "up":story['enemies'][i]['z'] += 1;break;
-              case "down":story['enemies'][i]['z'] -= 1;break;
+              case "n":story['enemies'][i]['y'] -= 1;break;
+              case "s":story['enemies'][i]['y'] += 1;break;
+              case "e":story['enemies'][i]['x'] += 1;break;
+              case "w":story['enemies'][i]['x'] -= 1;break;
+              case "ne":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] -= 1;break;
+              case "nw":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] -= 1;break;
+              case "se":story['enemies'][i]['x'] += 1;story['enemies'][i]['y'] += 1;break;
+              case "sw":story['enemies'][i]['x'] -= 1;story['enemies'][i]['y'] += 1;break;
+              case "u":story['enemies'][i]['z'] += 1;break;
+              case "d":story['enemies'][i]['z'] -= 1;break;
             }
           }
         }
@@ -995,6 +978,23 @@ exports.handler = function (req, context) {
     return results;
   }
 
+  function puzzle_solved_place_objects(puzzle, results) {
+    // place items on map if need be
+    if ('place' in puzzle && 'objects' in puzzle['place'] && 'x' in puzzle['place'] && 'y' in puzzle['place'] && 'z' in puzzle['place']) {
+      var map_location_2 = story['map'].filter(function (map) { return map.x == puzzle['place']['x'] && map.y == puzzle['place']['y'] && map.z == puzzle['place']['z'] });
+      if ('objects' in map_location_2[0]) {
+        map_location_2[0]['objects'] = map_location_2[0]['objects'].concat(puzzle['place']['objects']);
+      } else {
+        map_location_2[0]['objects'] = puzzle['place']['objects'];
+      }
+      var rec = {};
+      rec['title'] = 'OBJECTS AVAILABLE';
+      rec['lines'] = ['You sense that an object has been revealed somewhere!'];
+      results.push(rec);
+    }
+    return results;
+  }
+
   function puzzle_solved_place_puzzles(puzzle, results) {
     // place puzzles on map if need be
     if ('sequence' in puzzle && 'puzzles' in puzzle['sequence'] && 'x' in puzzle['sequence'] && 'y' in puzzle['sequence'] && 'z' in puzzle['sequence']) {
@@ -1109,6 +1109,7 @@ exports.handler = function (req, context) {
           results = puzzle_solved_unlock_gates(puzzles[j], results);
           results = puzzle_solved_lock_gates(puzzles[j], results);
           results = puzzle_solved_place_items(puzzles[j], results);
+          results = puzzle_solved_place_objects(puzzles[j], results);
           results = puzzle_solved_place_puzzles(puzzles[j], results);
           results = puzzle_solved_transport(puzzles[j], results);
           puzzle_solved_room_repeatable(puzzles[j], map_location);
@@ -1176,6 +1177,7 @@ exports.handler = function (req, context) {
             results = puzzle_solved_unlock_gates(puzzles[j], results);
             results = puzzle_solved_lock_gates(puzzles[j], results);
             results = puzzle_solved_place_items(puzzles[j], results);
+            results = puzzle_solved_place_objects(puzzles[j], results);
             results = puzzle_solved_place_puzzles(puzzles[j], results);
             results = puzzle_solved_transport(puzzles[j], results);
             puzzle_solved_friendly_repeatable(puzzles[j], friendlies_in_room[z]);
@@ -1233,6 +1235,7 @@ exports.handler = function (req, context) {
             results = puzzle_solved_unlock_gates(story['missions'][i]['puzzles'][j], results);
             results = puzzle_solved_lock_gates(story['missions'][i]['puzzles'][j], results);
             results = puzzle_solved_place_items(story['missions'][i]['puzzles'][j], results);
+            results = puzzle_solved_place_objects(story['missions'][i]['puzzles'][j], results);
             results = puzzle_solved_place_puzzles(story['missions'][i]['puzzles'][j], results);
             results = puzzle_solved_transport(story['missions'][i]['puzzles'][j], results);
             results = puzzle_solved_hidden_exits(map_location, results);
@@ -1736,17 +1739,16 @@ exports.handler = function (req, context) {
       }
       var rec = {};
       rec['title'] = 'HOW TO PLAY';
-      rec['lines'] = ['This is a free-roaming, text-only, game of imagination.','There are ' + story['missions'].length + ' total missions to solve.','Each mission may include many unique and challenging objectives.','There are ' + commands.length + ' commands you can use as you attempt your missions.'];
+      rec['lines'] = ['This is a free-roaming, text-only, game of imagination.','There are ' + story['missions'].length + ' total missions to solve.','Each mission may include many unique and challenging objectives.','There are ' + commands.length + ' commands you can use as you attempt your missions.','Details on each follows.'];
       results.push(rec);
-      // 'Details on each follows.'
       // show the list of commands you can get help with
-      // for (var i = 0; i < commands.length; i++) {
-      //   var rec = {};
-      //   rec['title'] = commands[i]['cmd'].toUpperCase();
-      //   rec['lines'] = [commands[i]['help']['detail']];
-      //   rec['lines'].push(commands[i]['help']['syntax']);
-      //   results.push(rec);
-      // }
+      for (var i = 0; i < commands.length; i++) {
+        var rec = {};
+        rec['title'] = commands[i]['cmd'].toUpperCase();
+        rec['lines'] = [commands[i]['help']['detail']];
+        rec['lines'].push(commands[i]['help']['syntax']);
+        results.push(rec);
+      }
     } else {
       var command_detail = commands.filter(function (commands) { return commands.cmd == cmd });
       if (command_detail.length > 0) {
@@ -1754,10 +1756,10 @@ exports.handler = function (req, context) {
         rec['title'] = cmd.toUpperCase();
         rec['lines'] = [command_detail[0]['help']['detail']];
         results.push(rec);
-        // var rec = {};
-        // rec['title'] = 'USAGE';
-        // rec['lines'] = [command_detail[0]['help']['syntax']];
-        // results.push(rec);
+        var rec = {};
+        rec['title'] = 'USAGE';
+        rec['lines'] = [command_detail[0]['help']['syntax']];
+        results.push(rec);
       } else {
         var rec = {};
         rec['title'] = 'BUMMER';
@@ -1822,32 +1824,32 @@ exports.handler = function (req, context) {
     var initial_y = y;
     var initial_z = z;
     switch (direction.toLowerCase()) {
-      case "north":direction = 'north';break;
-      case "south":direction = 'south';break;
-      case "east":direction = 'east';break;
-      case "west":direction = 'west';break;
-      case "northeast":direction = 'northeast';break;
-      case "northwest":direction = 'northwest';break;
-      case "southeast":direction = 'southeast';break;
-      case "southwest":direction = 'southwest';break;
-      case "up":direction = 'up';break;
-      case "down":direction = 'down';break;
+      case "north":direction = 'n';break;
+      case "south":direction = 's';break;
+      case "east":direction = 'e';break;
+      case "west":direction = 'w';break;
+      case "northeast":direction = 'ne';break;
+      case "northwest":direction = 'nw';break;
+      case "southeast":direction = 'se';break;
+      case "southwest":direction = 'sw';break;
+      case "up":direction = 'u';break;
+      case "down":direction = 'd';break;
     }
     // make sure the exit is available from the current location
     var map_location = story['map'].filter(function (map) { return map.x == x && map.y == y && map.z == z });
     if (map_location.length > 0 && 'exits' in map_location[0] && map_location[0]['exits'].indexOf(direction) > -1) {
       // we can move this direction
       switch (direction.toLowerCase()) {
-        case "north":y -= 1;break;
-        case "south":y += 1;break;
-        case "east":x += 1;break;
-        case "west":x -= 1;break;
-        case "northeast":x += 1;y -= 1;break;
-        case "northwest":x -= 1;y -= 1;break;
-        case "southeast":x += 1;y += 1;break;
-        case "southwest":x -= 1;y += 1;break;
-        case "up":z += 1;break;
-        case "down":z -= 1;break;
+        case "n":y -= 1;break;
+        case "s":y += 1;break;
+        case "e":x += 1;break;
+        case "w":x -= 1;break;
+        case "ne":x += 1;y -= 1;break;
+        case "nw":x -= 1;y -= 1;break;
+        case "se":x += 1;y += 1;break;
+        case "sw":x -= 1;y += 1;break;
+        case "u":z += 1;break;
+        case "d":z -= 1;break;
       }
       // attempt to get the new location on the map
       var new_map_location = story['map'].filter(function (map) { return map.x == x && map.y == y && map.z == z });
@@ -1908,6 +1910,41 @@ exports.handler = function (req, context) {
       var rec = {};
       rec['title'] = 'SORRY';
       rec['lines'] = ['That exit is not available from this location!'];
+      results.push(rec);
+    }
+    return results;
+  }
+
+  /**************************
+  *** OPEN AN OBJECT
+  **************************/
+  function open_cmd(object_name) {
+    var results = [];
+    // determine if object is in the current room
+    var map_location = story['map'].filter(function (map) { return map.x == story['character']['x'] && map.y == story['character']['y'] && map.z == story['character']['z'] });
+    var object_in_room = false;
+    if ('objects' in map_location[0]) {
+      var objects_in_room = map_location[0]['objects'];
+      for (var i = 0; i < objects_in_room.length; i++) {
+        if (objects_in_room[i] == object_name) {
+          object_in_room = true;
+          break;
+        }
+      }
+    }
+    if (object_in_room) {
+      // object is in the room; check for open puzzle
+      results = results.concat(check_puzzles('open',object_name));
+      if (results.length == 0) {
+        var rec = {};
+        rec['title'] = 'OPEN ' + object_name.toUpperCase();
+        rec['lines'] = ['Try as you might, you are unable to open ' + object_name + '.'];
+        results.push(rec);
+      }
+    } else {
+      var rec = {};
+      rec['title'] = 'OPEN ' + object_name.toUpperCase();
+      rec['lines'] = ['There is no ' + object_name + ' to open here.'];
       results.push(rec);
     }
     return results;
@@ -2413,7 +2450,7 @@ exports.handler = function (req, context) {
       rec['lines'] = [map_location[0]['description']];
       if ('items' in map_location[0] && map_location[0]['items'].length > 0) {
         for (var i = 0; i < map_location[0]['items'].length; i++) {
-          rec['lines'].push('A ' + map_location[0]['items'][i].toLowerCase() + ' is here.');
+          rec['lines'].push('A <span class="game_item">' + map_location[0]['items'][i].toLowerCase() + '</span> is here.');
         }
       }
       var enemies_in_room = story['enemies'].filter(function(enemies){return enemies.x == story['character']['x'] && enemies.y == story['character']['y'] && enemies.z == story['character']['z']});
@@ -2430,7 +2467,7 @@ exports.handler = function (req, context) {
       }
       if ('objects' in map_location[0] && map_location[0]['objects'].length > 0) {
         for (var i = 0; i < map_location[0]['objects'].length; i++) {
-          rec['lines'].push('A ' + map_location[0]['objects'][i].toLowerCase() + ' is here.');
+          rec['lines'].push('A <span class="game_item">' + map_location[0]['objects'][i].toLowerCase() + '</span> is here.');
         }
       }
       results.push(rec);
@@ -2638,6 +2675,11 @@ exports.handler = function (req, context) {
           break;
         case 'missions':
           results = results.concat(missions());
+          break;
+        case 'open':
+          if (rest_of_line != '') {
+            results = results.concat(open_cmd(rest_of_line));
+          }
           break;
         case 'pray':
           rest_of_line = rest_of_line.replace('at ', '').replace('for ','').replace('to ','');
